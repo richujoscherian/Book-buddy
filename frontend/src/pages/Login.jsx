@@ -35,7 +35,7 @@ export default function Login() {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-center text-indigo-600 mb-2">
-          Book Buddy 📚
+          Book Buddy 
         </h1>
         <p className="text-center text-gray-500 mb-6">Welcome back!</p>
 

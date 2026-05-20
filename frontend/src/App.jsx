@@ -4,6 +4,8 @@ import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 import Books from "./pages/Books"
 import AddBook from "./pages/AddBook"
+import Recommend from "./pages/Recommend"
+import AIReview from "./pages/AIReview"
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/books" element={<Books />} />
         <Route path="/books/add" element={<AddBook />} />
         <Route path="/books/edit/:bookId" element={<AddBook />} />
+        <Route path="/recommend" element={<Recommend />} />
+        <Route path="/review" element={<AIReview />} />
       </Routes>
     </BrowserRouter>
   )

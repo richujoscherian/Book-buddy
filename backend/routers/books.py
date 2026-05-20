@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
@@ -9,7 +9,10 @@ from auth import verify_token
 router = APIRouter()
 
 # Helper function to get current logged in user
-def get_current_user(token: str, db: Session):
+def get_current_user(authorization: str, db: Session):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    token = authorization.replace("Bearer ", "")
     payload = verify_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -28,11 +31,11 @@ class BookRequest(BaseModel):
 
 # Get all books for logged in user
 @router.get("/")
-def get_books(authorization: str = None, db: Session = Depends(get_db)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = get_current_user(token, db)
+def get_books(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    user_id = get_current_user(authorization, db)
     books = db.query(Book).filter(Book.owner_id == user_id).all()
     return books
 
@@ -40,14 +43,10 @@ def get_books(authorization: str = None, db: Session = Depends(get_db)):
 @router.post("/")
 def add_book(
     request: BookRequest,
-    authorization: str = None,
+    authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = get_current_user(token, db)
-    
+    user_id = get_current_user(authorization, db)
     new_book = Book(
         title=request.title,
         author=request.author,
@@ -69,22 +68,16 @@ def add_book(
 def edit_book(
     book_id: int,
     request: BookRequest,
-    authorization: str = None,
+    authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = get_current_user(token, db)
-    
+    user_id = get_current_user(authorization, db)
     book = db.query(Book).filter(
         Book.id == book_id,
         Book.owner_id == user_id
     ).first()
-    
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    
     book.title = request.title
     book.author = request.author
     book.genre = request.genre
@@ -93,7 +86,6 @@ def edit_book(
     book.current_page = request.current_page
     book.notes = request.notes
     book.rating = request.rating
-    
     db.commit()
     db.refresh(book)
     return book
@@ -102,36 +94,28 @@ def edit_book(
 @router.delete("/{book_id}")
 def delete_book(
     book_id: int,
-    authorization: str = None,
+    authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = get_current_user(token, db)
-    
+    user_id = get_current_user(authorization, db)
     book = db.query(Book).filter(
         Book.id == book_id,
         Book.owner_id == user_id
     ).first()
-    
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-    
     db.delete(book)
     db.commit()
     return {"message": "Book deleted successfully"}
 
 # Get stats for dashboard
 @router.get("/stats")
-def get_stats(authorization: str = None, db: Session = Depends(get_db)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    token = authorization.replace("Bearer ", "")
-    user_id = get_current_user(token, db)
-    
+def get_stats(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    user_id = get_current_user(authorization, db)
     books = db.query(Book).filter(Book.owner_id == user_id).all()
-    
     return {
         "total": len(books),
         "reading": len([b for b in books if b.status == "Reading"]),

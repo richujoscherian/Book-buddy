@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
-      
+
       {/* Logo */}
       <div
         className="text-xl font-bold text-indigo-600 cursor-pointer"
@@ -34,6 +34,18 @@ export default function Navbar() {
           className="text-gray-600 hover:text-indigo-600 font-medium transition"
         >
           My Books
+        </button>
+        <button
+          onClick={() => navigate("/recommend")}
+          className="text-gray-600 hover:text-indigo-600 font-medium transition"
+        >
+          Recommendations
+        </button>
+        <button
+          onClick={() => navigate("/review")}
+          className="text-gray-600 hover:text-indigo-600 font-medium transition"
+        >
+          AI Review
         </button>
       </div>
 
