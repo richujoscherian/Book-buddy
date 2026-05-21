@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
 import Navbar from "../components/Navbar"
+import api from "../lib/api"
 
 export default function Recommend() {
   const navigate = useNavigate()
@@ -15,8 +15,8 @@ export default function Recommend() {
     setError("")
     setRecommendation("")
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/ai/recommend",
+      const response = await api.get(
+        "/ai/recommend",
         { headers: { Authorization: `Bearer ${token}` } }
       )
       setRecommendation(response.data.recommendation)

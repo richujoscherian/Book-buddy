@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
 import Navbar from "../components/Navbar"
+import api from "../lib/api"
 
 export default function AIReview() {
   const navigate = useNavigate()
@@ -22,8 +22,8 @@ export default function AIReview() {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/books/",
+      const response = await api.get(
+        "/books/",
         { headers: { Authorization: `Bearer ${token}` } }
       )
       // Only show completed books with notes or rating
@@ -45,8 +45,8 @@ export default function AIReview() {
     setError("")
     setReview("")
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/ai/review",
+      const response = await api.post(
+        "/ai/review",
         { book_id: parseInt(selectedBook) },
         { headers: { Authorization: `Bearer ${token}` } }
       )

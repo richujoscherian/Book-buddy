@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import axios from "axios"
 import Navbar from "../components/Navbar"
+import api from "../lib/api"
 
 export default function AddBook() {
   const navigate = useNavigate()
@@ -34,7 +34,7 @@ export default function AddBook() {
 
   const fetchBook = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/books/", {
+      const response = await api.get("/books/", {
         headers: { Authorization: `Bearer ${token}` }
       })
       const book = response.data.find(b => b.id === parseInt(bookId))
@@ -53,14 +53,14 @@ export default function AddBook() {
     setError("")
     try {
       if (isEditing) {
-        await axios.put(
-          `http://127.0.0.1:8000/books/${bookId}`,
+        await api.put(
+          `/books/${bookId}`,
           form,
           { headers: { Authorization: `Bearer ${token}` } }
         )
       } else {
-        await axios.post(
-          "http://127.0.0.1:8000/books/",
+        await api.post(
+          "/books/",
           form,
           { headers: { Authorization: `Bearer ${token}` } }
         )

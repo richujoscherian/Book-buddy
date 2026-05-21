@@ -1,6 +1,6 @@
 import { useState } from "react"
-import axios from "axios"
 import { useNavigate, Link } from "react-router-dom"
+import api from "../lib/api"
 
 export default function Register() {
   // Store what user types
@@ -16,7 +16,7 @@ export default function Register() {
     setLoading(true)
     setError("")
     try {
-      await axios.post("http://127.0.0.1:8000/auth/register", {
+      await api.post("/auth/register", {
         username,
         email,
         password

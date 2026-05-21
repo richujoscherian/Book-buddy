@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
 import Navbar from "../components/Navbar"
+import api from "../lib/api"
 import {
   PieChart, Pie, Cell, Tooltip, Legend,
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer
@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/books/stats", {
+      const response = await api.get("/books/stats", {
         headers: { Authorization: `Bearer ${token}` }
       })
       setStats(response.data)
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/books/", {
+      const response = await api.get("/books/", {
         headers: { Authorization: `Bearer ${token}` }
       })
       setBooks(response.data)

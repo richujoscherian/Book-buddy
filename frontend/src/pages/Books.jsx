@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "axios"
 import Navbar from "../components/Navbar"
+import api from "../lib/api"
 
 export default function Books() {
   const navigate = useNavigate()
@@ -20,7 +20,7 @@ export default function Books() {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/books/", {
+      const response = await api.get("/books/", {
         headers: { Authorization: `Bearer ${token}` }
       })
       setBooks(response.data)
@@ -33,7 +33,7 @@ export default function Books() {
   const handleDelete = async (bookId) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return
     try {
-      await axios.delete(`http://127.0.0.1:8000/books/${bookId}`, {
+      await api.delete(`/books/${bookId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       fetchBooks()
